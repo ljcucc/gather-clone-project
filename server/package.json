@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon main.js",
+    "start_peer": "peerjs --port 3001"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,9 @@
     "nodemon": "^2.0.12"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "socket.io": "^4.1.3",
+    "uuid": "^8.3.2"
   }
 }
