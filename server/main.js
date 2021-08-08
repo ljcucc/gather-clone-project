@@ -40,23 +40,28 @@ const { v4: uuidV4 } = require('uuid');
       socket.broadcast.to(roomID).emit("user-joined", uid, clients);
 
       socket.on('disconnect', () => {
-        socket.to(roomID).broadcast.emit('user-leave', uid, clients);
+        socket.broadcast.to(roomID).emit('user-leave', uid, clients);
       });
     });
 
-    // hello world socket:
-    socket.on("hello", (username)=>{
-      console.log(username);
-      userData["username"] = username;
+    socket.on("get-room-client-list", (roomID)=>{
+      var clients = io.sockets.adapter.rooms.get(roomID);
 
-      console.log(userData);
+      if(!clients){
+        socket.emit("get-room-client-list-feedback",roomID,{
+          success: false,
+          msg: "room not found"
+        });
+        return;
+      }
+
+      clients = Array.from(clients);
+      socket.emit("get-room-client-list-feedback", roomID, {
+        success: true,
+        value: clients
+      });
+
     });
-
-    socket.on("count", ()=>{
-      ++countVar;
-      console.log(countVar);
-    });
-
   });
 
   // Start the Web Server

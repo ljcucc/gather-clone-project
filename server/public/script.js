@@ -36,25 +36,28 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
 
   window.addEventListener("load", onload);
 
-  var startButton, username, roomID, chatlog;
+  var joinRoomButton, username, roomID, chatlog, getRoomClientListBtn;
 
   var chatInfo = {};
 
   function onload(){
-    startButton = document.querySelector("#start");
+    joinRoomButton = document.querySelector("#join-room");
     username = document.querySelector("#username");
     roomID = document.querySelector("#roomID");
     chatlog = document.querySelector("#chat-log");
+    getRoomClientListBtn = document.querySelector("#get-room-client-list");
 
-    startButton.addEventListener("click", onStartBtnClicked);
+    joinRoomButton.addEventListener("click", onJpinRoomBtnClicked);
+    getRoomClientListBtn.addEventListener("click", onGetRoomClietListBtnClicked)
+
     socket.on("user-joined", onUserJoined);
     socket.on("userlist-update", onUserlistUpdate);
     socket.on("user-leave", onUserLeave);
+    socket.on("get-room-client-list-feedback", onGetRoomClientListBtnClicked);
   }
 
-  function onStartBtnClicked(){
+  function onJpinRoomBtnClicked(){
     console.log(`username is: ${username.value}`);
-    socket.emit("hello", username.value);
 
     joinRoom();
   }
@@ -69,10 +72,23 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
   function joinRoom(){
     if(chatInfo?.roomID && chatInfo.roomID == roomID.value) return;
 
+    //TODO: Discoonnect from current room if joined
+
     socket.emit("join-room", roomID.value, username.value);
     appendChatLog(`You're joined into room ${roomID.value}`);
 
     chatInfo.roomID = roomID.value;
+  }
+
+  function onGetRoomClientListBtnClicked(){
+    socket.emit("get-room-client-list", roomID.value);
+  }
+
+  function onGetRoomClientList_feedback(roomID, data){
+    console.log({
+      roomID,
+      data
+    });
   }
 
   function appendChatLog(message){
@@ -86,7 +102,6 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
   }
 
   function onUserLeave(userId, clients){
-    socket.leave(user)
-
+    // TODO: unfinish
   }
 })();
