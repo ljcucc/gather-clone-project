@@ -20,14 +20,40 @@
       height: 100%;
       object-fit: cover;
     }
+
+    input, button, select{
+      font-size: 16px;
+      padding: 8px;
+    }
+
+    #chat-log{
+      font-size: 16px;
+      font-family: monospace;
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
   <div id="video-grid"></div>
   <div class="chat-room"></div>
 
-  <input id="username"/>
-  <input type="text" id="roomID" placeholder=""/>
+  <!-- <input id="username" placeholder="username"/> -->
+  <select type="text" id="username" placeholder="roomID">
+    <option value="Aidan">Aidan</option>
+    <option value="Jason">Jason</option>
+    <option value="Guest">Guest</option>
+    <option value="Alex">Alex</option>
+    <option value="Siri">Siri</option>
+  </select>
+
+  <!-- <input type="text" id="roomID" placeholder="roomID"/> -->
+  <select type="text" id="roomID" placeholder="roomID">
+    <option value="1">Room 1</option>
+    <option value="2">Room 2</option>
+    <option value="3">Room 3</option>
+    <option value="4">Room 4</option>
+    <option value="5">Room 5</option>
+  </select>
   <button id="start">Start</button>
 
   <div id="chat-log"></div>

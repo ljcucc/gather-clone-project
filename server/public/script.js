@@ -9,8 +9,8 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
 
 (() => {
   // console.log(`New socket : ${socket}`); 
-  console.log("New socket:");
-  console.log(socket);
+  // console.log("New socket:");
+  // console.log(socket);
 
   const videoGrid = document.querySelector("#video-grid");
   const chatRoomDom = document.querySelector(".chat-room");
@@ -38,6 +38,8 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
 
   var startButton, username, roomID, chatlog;
 
+  var chatInfo = {};
+
   function onload(){
     startButton = document.querySelector("#start");
     username = document.querySelector("#username");
@@ -46,6 +48,8 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
 
     startButton.addEventListener("click", onStartBtnClicked);
     socket.on("user-joined", onUserJoined);
+    socket.on("userlist-update", onUserlistUpdate);
+    socket.on("user-leave", onUserLeave);
   }
 
   function onStartBtnClicked(){
@@ -55,17 +59,34 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
     joinRoom();
   }
 
-  function onUserJoined(uid){
+  function onUserJoined(uid, clients){
+    console.log(clients);
+
     if(uid == username.value) return;
     appendChatLog(`Someone called ${uid} is joined to this room`);
   }
 
   function joinRoom(){
+    if(chatInfo?.roomID && chatInfo.roomID == roomID.value) return;
+
     socket.emit("join-room", roomID.value, username.value);
     appendChatLog(`You're joined into room ${roomID.value}`);
+
+    chatInfo.roomID = roomID.value;
   }
 
   function appendChatLog(message){
     chatlog.innerHTML += `${message}</br>`;
+  }
+
+  function onUserlistUpdate(userList){
+    console.log("update user list:");
+    console.log(userList);
+    appendChatLog(`udpate user list: ${userList}`);
+  }
+
+  function onUserLeave(userId, clients){
+    socket.leave(user)
+
   }
 })();

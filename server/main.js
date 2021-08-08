@@ -22,18 +22,29 @@ const { v4: uuidV4 } = require('uuid');
 
   io.on("connection", socket=>{
     console.log("someonl is connected");
-    console.log("Connected socket:");
-    console.log(socket.id);
+    // console.log("Connected socket:");
+    // console.log(socket.id);
 
     var userData = {};
     var countVar = 0;
 
+    // on user joined to room:
     socket.on("join-room", (roomID, uid)=>{
       console.log(`${uid} is joined to room ${roomID}`);
+
       socket.join(roomID); // join room
-      socket.broadcast.to(roomID).emit("user-joined", uid);
+      var clients = Array.from(io.sockets.adapter.rooms.get(roomID));
+
+      console.log(clients);
+
+      socket.broadcast.to(roomID).emit("user-joined", uid, clients);
+
+      socket.on('disconnect', () => {
+        socket.to(roomID).broadcast.emit('user-leave', uid, clients);
+      });
     });
 
+    // hello world socket:
     socket.on("hello", (username)=>{
       console.log(username);
       userData["username"] = username;
