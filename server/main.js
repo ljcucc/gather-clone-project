@@ -20,6 +20,28 @@ const { v4: uuidV4 } = require('uuid');
     res.redirect("/public/index.html");
   });
 
+  io.on("connection", socket=>{
+    console.log("someonl is connected");
+    console.log("Connected socket:");
+    console.log(socket.id);
+
+    var userData = {};
+    var countVar = 0;
+
+    socket.on("hello", (username)=>{
+      console.log(username);
+      userData["username"] = username;
+
+      console.log(userData);
+    });
+
+    socket.on("count", ()=>{
+      ++countVar;
+      console.log(countVar);
+    });
+
+  });
+
   // Start the Web Server
   server.listen(3000);
 })();

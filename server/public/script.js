@@ -1,4 +1,4 @@
-// const socket = io('/'); // connect to localhost:3000/ socket.io server
+const socket = io('/'); // connect to localhost:3000/ socket.io server
 
 // const myPeer = new Peer(undefined, {
 //   host: '/',
@@ -8,6 +8,10 @@
 // const peers = {};
 
 (() => {
+  // console.log(`New socket : ${socket}`); 
+  console.log("New socket:");
+  console.log(socket);
+
   const videoGrid = document.querySelector("#video-grid");
   const chatRoomDom = document.querySelector(".chat-room");
 
@@ -28,5 +32,27 @@
     selfVideo.muted = true;
 
     videoGrid.appendChild(selfVideo);
+  }
+
+  window.addEventListener("load", onload);
+
+  var startButton, username, countBtn;
+
+  function onload(){
+    startButton = document.querySelector("#start");
+    username = document.querySelector("#username");
+    countBtn = document.querySelector("#count");
+
+    startButton.addEventListener("click", onStartBtnClicked);
+    countBtn.addEventListener("click", onCountBtnClicked);
+  }
+
+  function onStartBtnClicked(){
+    console.log(`username is: ${username.value}`);
+    socket.emit("hello", username.value);
+  }
+
+  function onCountBtnClicked(){
+    socket.emit("count");
   }
 })();
