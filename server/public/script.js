@@ -1,56 +1,32 @@
-const socket = io('/')
-const videoGrid = document.getElementById('video-grid')
-const myPeer = new Peer(undefined, {
-  host: '/',
-  port: '3001'
-})
-const myVideo = document.createElement('video')
-myVideo.muted = true
-const peers = {}
-navigator.mediaDevices.getUserMedia({
-  video: true,
-  audio: true
-}).then(stream => {
-  addVideoStream(myVideo, stream)
+// const socket = io('/'); // connect to localhost:3000/ socket.io server
 
-  myPeer.on('call', call => {
-    call.answer(stream)
-    const video = document.createElement('video')
-    call.on('stream', userVideoStream => {
-      addVideoStream(video, userVideoStream)
-    })
-  })
+// const myPeer = new Peer(undefined, {
+//   host: '/',
+//   port: '3001'
+// });
 
-  socket.on('user-connected', userId => {
-    connectToNewUser(userId, stream)
-  })
-})
+// const peers = {};
 
-socket.on('user-disconnected', userId => {
-  if (peers[userId]) peers[userId].close()
-})
+(() => {
+  const videoGrid = document.querySelector("#video-grid");
+  const chatRoomDom = document.querySelector(".chat-room");
 
-myPeer.on('open', id => {
-  socket.emit('join-room', ROOM_ID, id)
-})
+  navigator.mediaDevices.getUserMedia({
+    video: true,
+    audio: true
+  }).then(stream => { // on video and mic allow
+    console.log("Webcan is working!")
+    createSelfVideo(stream);
+  });
 
-function connectToNewUser(userId, stream) {
-  const call = myPeer.call(userId, stream)
-  const video = document.createElement('video')
-  call.on('stream', userVideoStream => {
-    addVideoStream(video, userVideoStream)
-  })
-  call.on('close', () => {
-    video.remove()
-  })
+  function createSelfVideo(stream){
+    console.log("creating self video element");
 
-  peers[userId] = call
-}
+    var selfVideo = document.createElement("video");
+    selfVideo.srcObject = stream;
+    selfVideo.autoplay = true;
+    selfVideo.muted = true;
 
-function addVideoStream(video, stream) {
-  video.srcObject = stream
-  video.addEventListener('loadedmetadata', () => {
-    video.play()
-  })
-  videoGrid.append(video)
-}
+    videoGrid.appendChild(selfVideo);
+  }
+})();

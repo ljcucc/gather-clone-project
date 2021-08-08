@@ -1,31 +1,25 @@
-(()=>{
-const express = require('express')
-const app = express()
-const server = require('http').Server(app)
-const io = require('socket.io')(server)
-const { v4: uuidV4 } = require('uuid')
+//Imports
+const express = require('express');
+const socketIO = require('socket.io');
+const { v4: uuidV4 } = require('uuid');
 
-app.set('view engine', 'ejs')
-app.use(express.static('public'))
+(() => {
 
-app.get('/', (req, res) => {
-  res.redirect(`/${uuidV4()}`)
-})
+  // Server Setup
+  const app = express()
+  const server = require('http').Server(app)
+  const io = socketIO(server);
 
-app.get('/:room', (req, res) => {
-  res.render('room', { roomId: req.params.room })
-})
+  app.use('/public', express.static('public'));
 
-io.on('connection', socket => {
-  socket.on('join-room', (roomId, userId) => {
-    socket.join(roomId)
-    socket.broadcast.to(roomId).emit('user-connected', userId)
+  app.get("/api/home", (req, res)=>{
+    res.send("I'm working now.");
+  });
 
-    socket.on('disconnect', () => {
-      socket.broadcast.to(roomId).emit('user-disconnected', userId)
-    })
-  })
-})
+  app.get("/",(req, res)=>{
+    res.redirect("/public/index.html");
+  });
 
-server.listen(3000)
+  // Start the Web Server
+  server.listen(3000);
 })();
