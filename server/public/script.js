@@ -36,23 +36,36 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
 
   window.addEventListener("load", onload);
 
-  var startButton, username, countBtn;
+  var startButton, username, roomID, chatlog;
 
   function onload(){
     startButton = document.querySelector("#start");
     username = document.querySelector("#username");
-    countBtn = document.querySelector("#count");
+    roomID = document.querySelector("#roomID");
+    chatlog = document.querySelector("#chat-log");
 
     startButton.addEventListener("click", onStartBtnClicked);
-    countBtn.addEventListener("click", onCountBtnClicked);
+    socket.on("user-joined", onUserJoined);
   }
 
   function onStartBtnClicked(){
     console.log(`username is: ${username.value}`);
     socket.emit("hello", username.value);
+
+    joinRoom();
   }
 
-  function onCountBtnClicked(){
-    socket.emit("count");
+  function onUserJoined(uid){
+    if(uid == username.value) return;
+    appendChatLog(`Someone called ${uid} is joined to this room`);
+  }
+
+  function joinRoom(){
+    socket.emit("join-room", roomID.value, username.value);
+    appendChatLog(`You're joined into room ${roomID.value}`);
+  }
+
+  function appendChatLog(message){
+    chatlog.innerHTML += `${message}</br>`;
   }
 })();

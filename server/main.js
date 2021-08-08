@@ -28,6 +28,12 @@ const { v4: uuidV4 } = require('uuid');
     var userData = {};
     var countVar = 0;
 
+    socket.on("join-room", (roomID, uid)=>{
+      console.log(`${uid} is joined to room ${roomID}`);
+      socket.join(roomID); // join room
+      socket.broadcast.to(roomID).emit("user-joined", uid);
+    });
+
     socket.on("hello", (username)=>{
       console.log(username);
       userData["username"] = username;
