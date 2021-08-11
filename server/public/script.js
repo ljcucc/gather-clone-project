@@ -48,12 +48,11 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
     getRoomClientListBtn = document.querySelector("#get-room-client-list");
 
     joinRoomButton.addEventListener("click", onJpinRoomBtnClicked);
-    getRoomClientListBtn.addEventListener("click", onGetRoomClietListBtnClicked)
+    getRoomClientListBtn.addEventListener("click", getRoomClientList)
 
     socket.on("user-joined", onUserJoined);
     socket.on("userlist-update", onUserlistUpdate);
     socket.on("user-leave", onUserLeave);
-    socket.on("get-room-client-list-feedback", onGetRoomClientListBtnClicked);
   }
 
   function onJpinRoomBtnClicked(){
@@ -80,14 +79,19 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
     chatInfo.roomID = roomID.value;
   }
 
-  function onGetRoomClientListBtnClicked(){
+  function getRoomClientList(){
     socket.emit("get-room-client-list", roomID.value);
-  }
-
-  function onGetRoomClientList_feedback(roomID, data){
-    console.log({
-      roomID,
-      data
+    fetch(`/api/get_room_list/${roomID.value}/${socket.id}`,{
+      method: 'GET',
+    }).then((res)=>{
+      return res.json();
+    }).then((json)=>{
+      if(!json.success){
+        alert(json.msg);
+        return;
+      }
+      var clients = json.data;
+      console.log(clients);
     });
   }
 
@@ -102,6 +106,6 @@ const socket = io('/'); // connect to localhost:3000/ socket.io server
   }
 
   function onUserLeave(userId, clients){
-    // TODO: unfinish
+    // TODO: unfinished
   }
 })();
